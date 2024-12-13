@@ -26,7 +26,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
 
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
+    private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
     public final boolean isLocalWorld;
     private final Player player;
@@ -73,7 +73,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
     public void slotsChanged(@Nonnull Container container) {
         try {
             Method onCraftChange = ObfuscationReflectionHelper.findMethod(CraftingMenu.class, "slotChangedCraftingGrid", AbstractContainerMenu.class, Level.class, Player.class, CraftingContainer.class, ResultContainer.class);
-            onCraftChange.invoke(null, this, this.player.level, this.player, this.craftMatrix, this.craftResult);
+            onCraftChange.invoke(null, this, this.player.level(), this.player, this.craftMatrix, this.craftResult);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -85,7 +85,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
         super.removed(player);
         this.craftResult.clearContent();
 
-        if (!player.level.isClientSide) {
+        if (!player.level().isClientSide) {
             this.clearContainer(player, this.craftMatrix);
         }
     }

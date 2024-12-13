@@ -24,7 +24,7 @@ public class OpenBaublesInvPacket {
             var playerEntity = ctx.get().getSender();
             if (playerEntity != null) {
                 playerEntity.closeContainer();
-                NetworkHooks.openGui(playerEntity, new GuiProvider());
+                NetworkHooks.openScreen(playerEntity, new GuiProvider(), buf -> {});
             }
         });
         ctx.get().setPacketHandled(true);

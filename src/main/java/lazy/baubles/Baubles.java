@@ -1,7 +1,6 @@
 package lazy.baubles;
 
 import lazy.baubles.api.BaublesAPI;
-import lazy.baubles.api.cap.CapabilityBaubles;
 import lazy.baubles.client.gui.PlayerExpandedScreen;
 import lazy.baubles.network.PacketHandler;
 import lazy.baubles.setup.ModConfigs;
@@ -9,19 +8,22 @@ import lazy.baubles.setup.ModItems;
 import lazy.baubles.setup.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Mod(BaublesAPI.MOD_ID)
 public class Baubles {
 
-    public static KeyMapping KEY_BAUBLES = null;
+    public static final Lazy<KeyMapping> KEY_BAUBLES = Lazy.of(() -> new KeyMapping(
+            "keybind.baublesinventory",
+            InputConstants.KEY_B,
+            "key.categories.inventory"));
 
     public Baubles() {
         ModConfigs.registerAndLoadConfig();
@@ -37,7 +39,10 @@ public class Baubles {
 
     private void setupClient(FMLClientSetupEvent event) {
         MenuScreens.register(ModMenus.PLAYER_BAUBLES.get(), PlayerExpandedScreen::new);
-        KEY_BAUBLES = new KeyMapping("keybind.baublesinventory", GLFW.GLFW_KEY_B, "key.categories.inventory");
-        ClientRegistry.registerKeyBinding(KEY_BAUBLES);
+    }
+
+    @SubscribeEvent
+    public static void registerKeyBinds(RegisterKeyMappingsEvent event) {
+        event.register(KEY_BAUBLES.get());
     }
 }

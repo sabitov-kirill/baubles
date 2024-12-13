@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
     }
 }
 
@@ -88,7 +88,7 @@ task apiJar(type: Jar) {
     from(sourceSets.main.allJava)
     from(sourceSets.main.output)
     include 'lazy/baubles/api/**'
-    classifier("api")
+    archiveClassifier.set("api")
 }
 
 artifacts {
@@ -132,5 +132,5 @@ publishing {
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    classifier = 'deobf'
+    archiveClassifier.set('deobf')
 }

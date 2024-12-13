@@ -11,10 +11,15 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModMenus {
 
-    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, BaublesAPI.MOD_ID);
+    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
+            BaublesAPI.MOD_ID);
 
-    public static final RegistryObject<MenuType<PlayerExpandedContainer>> PLAYER_BAUBLES = MENUS.register("player_baubles",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new PlayerExpandedContainer(windowId, inv, !inv.player.level.isClientSide)));
+    public static final RegistryObject<MenuType<PlayerExpandedContainer>> PLAYER_BAUBLES = MENUS.register(
+            "player_baubles",
+            () -> IForgeMenuType.create((windowId, inv, data) -> new PlayerExpandedContainer(
+                    windowId,
+                    inv,
+                    !inv.player.level().isClientSide)));
 
     public static void init() {
         MENUS.register(FMLJavaModLoadingContext.get().getModEventBus());

@@ -37,23 +37,32 @@ public class SlotBauble extends SlotItemHandler {
 
     @Override
     public void onTake(Player playerIn, ItemStack stack) {
-        if (!hasItem() && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() && stack.getCapability(CapabilityBaubles.ITEM_BAUBLE).isPresent()) {
-            stack.getCapability(CapabilityBaubles.ITEM_BAUBLE, null).ifPresent((iBauble) -> iBauble.onUnequipped(playerIn, stack));
+        if (!hasItem() && !((IBaublesItemHandler) getItemHandler()).isEventBlocked()
+                && stack.getCapability(CapabilityBaubles.ITEM_BAUBLE).isPresent()) {
+            stack.getCapability(CapabilityBaubles.ITEM_BAUBLE, null)
+                    .ifPresent((iBauble) -> iBauble.onUnequipped(playerIn, stack));
         }
         super.onTake(playerIn, stack);
     }
 
     @Override
     public void set(ItemStack stack) {
-        if (hasItem() && !ItemStack.isSame(stack, getItem()) && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() && getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).isPresent()) {
-            getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).ifPresent((iBauble) -> iBauble.onUnequipped(player, stack));
+        if (hasItem() &&
+                !ItemStack.isSameItem(stack, getItem()) &&
+                !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
+                getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).isPresent()) {
+            getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null)
+                    .ifPresent((iBauble) -> iBauble.onUnequipped(player, stack));
         }
 
         ItemStack oldstack = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSame(oldstack, getItem()) && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() && getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).isPresent()) {
-            getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).ifPresent((iBauble) -> iBauble.onEquipped(player, stack));
+        if (hasItem() && !ItemStack.isSameItem(oldstack, getItem())
+                && !((IBaublesItemHandler) getItemHandler()).isEventBlocked()
+                && getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null).isPresent()) {
+            getItem().getCapability(CapabilityBaubles.ITEM_BAUBLE, null)
+                    .ifPresent((iBauble) -> iBauble.onEquipped(player, stack));
         }
     }
 

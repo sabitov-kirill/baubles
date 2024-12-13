@@ -27,20 +27,17 @@
   <img alt="License" src="https://img.shields.io/badge/license-ANS3.0NC-yellow">
 </p>
 
-
-### Description:
+### Description
 
 Mod API originally created by **@Azanor** that adds 7 slots to the player inventory.
 
 You can learn how to use the API [here](https://lazynessmind.github.io).
 
-For any questions DM me on twitter: *@_nesslazy*
+### Disclaimer
 
-### Disclaimer:
-
-I am not the original creator of the mod! I just ported to 1.14.
+This is not the original mod, just ported to 1.14, later on 1.20.1.
 The idea, resources (textures, logo…) and most of the code was created by @Azanor.
 
-### License:
+### License
 
 The license you can find it on the original [repository](https://github.com/Azanor/Baubles).

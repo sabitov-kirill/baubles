@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -53,7 +53,7 @@ public class EventHandlerEntity {
     }
 
     @SubscribeEvent
-    public static void playerJoin(EntityJoinWorldEvent event) {
+    public static void playerJoin(EntityJoinLevelEvent event) {
         var entity = event.getEntity();
         if (entity instanceof ServerPlayer serverPlayer) {
             syncSlots(serverPlayer, Collections.singletonList(serverPlayer));
@@ -64,7 +64,7 @@ public class EventHandlerEntity {
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         var target = event.getTarget();
         if (target instanceof ServerPlayer serverPlayer) {
-            syncSlots(serverPlayer, Collections.singletonList(event.getPlayer()));
+            syncSlots(serverPlayer, Collections.singletonList(event.getEntity()));
         }
     }
 
@@ -78,11 +78,11 @@ public class EventHandlerEntity {
 
     @SubscribeEvent
     public static void rightClickItem(PlayerInteractEvent.RightClickItem event) {
-        var itemStack = event.getPlayer().getItemInHand(event.getHand());
+        var itemStack = event.getEntity().getItemInHand(event.getHand());
 
         if (itemStack.getItem() instanceof IBauble bauble) {
-            var itemHandler = BaublesAPI.getBaublesHandler(event.getPlayer()).orElseThrow(NullPointerException::new);
-            int emptySlot = BaublesAPI.getEmptySlotForBaubleType(event.getPlayer(), bauble.getBaubleType(itemStack));
+            var itemHandler = BaublesAPI.getBaublesHandler(event.getEntity()).orElseThrow(NullPointerException::new);
+            int emptySlot = BaublesAPI.getEmptySlotForBaubleType(event.getEntity(), bauble.getBaubleType(itemStack));
 
             if (emptySlot != -1) {
                 itemHandler.setStackInSlot(emptySlot, itemStack.copy());
@@ -90,8 +90,8 @@ public class EventHandlerEntity {
             }
         } else if (itemStack.getCapability(CapabilityBaubles.ITEM_BAUBLE).isPresent()) {
             var bauble = itemStack.getCapability(CapabilityBaubles.ITEM_BAUBLE).orElseThrow(NullPointerException::new);
-            var itemHandler = BaublesAPI.getBaublesHandler(event.getPlayer()).orElseThrow(NullPointerException::new);
-            int emptySlot = BaublesAPI.getEmptySlotForBaubleType(event.getPlayer(), bauble.getBaubleType(itemStack));
+            var itemHandler = BaublesAPI.getBaublesHandler(event.getEntity()).orElseThrow(NullPointerException::new);
+            int emptySlot = BaublesAPI.getEmptySlotForBaubleType(event.getEntity(), bauble.getBaubleType(itemStack));
 
             if (emptySlot != -1) {
                 itemHandler.setStackInSlot(emptySlot, itemStack.copy());
@@ -102,7 +102,7 @@ public class EventHandlerEntity {
 
     @SubscribeEvent
     public static void playerDeath(LivingDropsEvent event) {
-        var level = event.getEntity().level;
+        var level = event.getEntity().level();
         if (event.getEntity() instanceof Player p && !level.isClientSide && !level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             dropItemsAt(p, event.getDrops());
         }
@@ -129,7 +129,7 @@ public class EventHandlerEntity {
             for (int i = 0; i < baubles.getSlots(); ++i) {
                 if (!baubles.getStackInSlot(i).isEmpty()) {
                     var pos = player.position();
-                    var bauble = new ItemEntity(player.level, pos.x, pos.y + player.getEyeHeight(), pos.z, baubles.getStackInSlot(i).copy());
+                    var bauble = new ItemEntity(player.level(), pos.x, pos.y + player.getEyeHeight(), pos.z, baubles.getStackInSlot(i).copy());
                     bauble.setPickUpDelay(40);
                     drops.add(bauble);
                     baubles.setStackInSlot(i, ItemStack.EMPTY);

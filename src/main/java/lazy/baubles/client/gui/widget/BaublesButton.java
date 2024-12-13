@@ -7,6 +7,7 @@ import lazy.baubles.network.msg.OpenBaublesInvPacket;
 import lazy.baubles.network.msg.OpenNormalInvPacket;
 import lazy.baubles.network.PacketHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -14,9 +15,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.opengl.GL11;
-
-import javax.annotation.Nonnull;
 
 @SuppressWarnings("rawtypes")
 public class BaublesButton extends AbstractButton {
@@ -31,7 +29,7 @@ public class BaublesButton extends AbstractButton {
     }
 
     @Override
-    public void onPress() { //onPress
+    public void onPress() { // onPress
         if (parentGui instanceof InventoryScreen) {
             PacketHandler.INSTANCE.sendToServer(new OpenBaublesInvPacket());
         } else {
@@ -43,30 +41,44 @@ public class BaublesButton extends AbstractButton {
     }
 
     @Override
-    public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.minecraft == null) return;
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        if (this.minecraft == null)
+            return;
+
         if (this.minecraft.player != null && !this.minecraft.player.isCreative()) {
             if (this.visible) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.setShaderTexture(0, PlayerExpandedScreen.BACKGROUND);
 
-                this.isHovered = mouseX >= x && mouseY >= this.y && mouseX < x + this.width && mouseY < this.y + this.height;
+                this.isHovered = mouseX >= this.getX() &&
+                        mouseY >= this.getY() &&
+                        mouseX < this.getX() + this.getWidth() &&
+                        mouseY < this.getY() + this.getHeight();
 
                 RenderSystem.enableBlend();
-                RenderSystem.blendFuncSeparate(770, 771, 1, 0);
-                RenderSystem.blendFuncSeparate(770, 771, 1, 0);
-                RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                RenderSystem.defaultBlendFunc();
 
+                PoseStack poseStack = guiGraphics.pose();
                 poseStack.pushPose();
                 poseStack.translate(0, 0, 200);
-                poseStack.translate(0, 0, 200);
+
                 if (!isHovered) {
-                    this.blit(poseStack, x, this.y, 200, 48, 10, 10);
+                    guiGraphics.blit(PlayerExpandedScreen.BACKGROUND,
+                            this.getX(), this.getY(),
+                            200, 48, 10, 10);
                 } else {
-                    this.blit(poseStack, x, this.y, 210, 48, 10, 10);
-                    this.minecraft.font.draw(poseStack, Component.translatable("button.displayText").getString(), x + 5, this.y + this.height, 0xffffff);
+                    guiGraphics.blit(
+                            PlayerExpandedScreen.BACKGROUND,
+                            this.getX(), this.getY(),
+                            210, 48, 10, 10);
+                    guiGraphics.drawString(
+                            this.minecraft.font,
+                            Component.translatable("button.displayText").getString(),
+                            this.getX() + 5, this.getY() + this.getHeight(),
+                            0xffffff);
                 }
+
                 poseStack.popPose();
             }
         }
@@ -77,7 +89,7 @@ public class BaublesButton extends AbstractButton {
     }
 
     @Override
-    public void updateNarration(@Nonnull NarrationElementOutput output) {
+    protected void updateWidgetNarration(NarrationElementOutput output) {
         this.defaultButtonNarrationText(output);
     }
 }

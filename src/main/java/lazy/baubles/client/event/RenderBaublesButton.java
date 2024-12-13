@@ -11,9 +11,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderBaublesButton {
 
-    @SuppressWarnings("rawtypes")
     @SubscribeEvent
-    public static void onGuiPostInit(ScreenEvent.InitScreenEvent.Post event) {
+    public static void onGuiPostInit(ScreenEvent.Init.Post event) {
         Screen screen = event.getScreen();
         if (screen instanceof EffectRenderingInventoryScreen effectRenderingInventoryScreen) {
             if (event.getListenersList() != null) {
@@ -21,4 +20,5 @@ public class RenderBaublesButton {
             }
         }
     }
+
 }

@@ -21,6 +21,6 @@ public class GuiProvider implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, @Nonnull Inventory playerInventory, Player playerEntity) {
-        return new PlayerExpandedContainer(id, playerInventory, !playerEntity.level.isClientSide);
+        return new PlayerExpandedContainer(id, playerInventory, !playerEntity.level().isClientSide);
     }
 }

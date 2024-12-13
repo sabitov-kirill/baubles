@@ -16,7 +16,7 @@ public class ClientPlayerTick {
     @SubscribeEvent
     public static void playerTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
-            if (Baubles.KEY_BAUBLES.consumeClick() && Minecraft.getInstance().isWindowActive()) {
+            if (Baubles.KEY_BAUBLES.get().consumeClick() && Minecraft.getInstance().isWindowActive()) {
                 PacketHandler.INSTANCE.sendToServer(new OpenBaublesInvPacket());
             }
         }

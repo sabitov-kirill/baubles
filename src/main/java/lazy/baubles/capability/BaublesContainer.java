@@ -31,7 +31,8 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
 
     @Override
     public void setSize(int size) {
-        if (size != BAUBLE_SLOTS) System.out.println("Cannot resize baubles container");
+        if (size != BAUBLE_SLOTS)
+            System.out.println("Cannot resize baubles container");
     }
 
     /**
@@ -40,20 +41,23 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
      */
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         var baubleCap = stack.getCapability(CapabilityBaubles.ITEM_BAUBLE);
-        if (stack.isEmpty() || !baubleCap.isPresent()) return false;
+        if (stack.isEmpty() || !baubleCap.isPresent())
+            return false;
         var bauble = baubleCap.orElseThrow(NullPointerException::new);
         return bauble.canEquip(holder) && bauble.getBaubleType(stack).hasSlot(slot);
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack)) super.setStackInSlot(slot, stack);
+        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack))
+            super.setStackInSlot(slot, stack);
     }
 
     @Override
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!this.isItemValidForSlot(slot, stack)) return stack;
+        if (!this.isItemValidForSlot(slot, stack))
+            return stack;
         return super.insertItem(slot, stack, simulate);
     }
 
@@ -81,17 +85,20 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
     }
 
     private void sync() {
-        if (!(holder instanceof ServerPlayer)) return;
+        if (!(holder instanceof ServerPlayer))
+            return;
 
         final var holder = (ServerPlayer) this.holder;
 
         List<ServerPlayer> receivers = null;
         for (byte i = 0; i < getSlots(); i++) {
             final var stack = getStackInSlot(i);
-            boolean autoSync = stack.getCapability(CapabilityBaubles.ITEM_BAUBLE).map(b -> b.willAutoSync(this.holder)).orElse(false);
-            if (changed[i] || autoSync && !ItemStack.isSame(stack, previous[i])) {
+            boolean autoSync = stack.getCapability(CapabilityBaubles.ITEM_BAUBLE).map(b -> b.willAutoSync(this.holder))
+                    .orElse(false);
+            if (changed[i] || autoSync && !ItemStack.isSameItem(stack, previous[i])) {
                 if (receivers == null) {
-                    receivers = new ArrayList<>(((ServerLevel) this.holder.level).getPlayers((serverPlayerEntity) -> true));
+                    receivers = new ArrayList<>(
+                            ((ServerLevel) this.holder.level()).getPlayers((serverPlayerEntity) -> true));
                     receivers.add(holder);
                 }
                 EventHandlerEntity.syncSlot(holder, i, stack, receivers);

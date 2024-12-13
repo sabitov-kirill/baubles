@@ -1,12 +1,10 @@
 package lazy.baubles.api.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import org.joml.Quaternionf;
 import lazy.baubles.api.bauble.IBauble;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.opengl.GL11;
 
 /**
  * A Bauble Item that implements this will be have hooks to render something on
@@ -17,13 +15,13 @@ import org.lwjgl.opengl.GL11;
 public interface IRenderBauble extends IBauble {
 
     /**
-     * Called for the rendering of the bauble on the player. The player instance can be
+     * Called for the rendering of the bauble on the player. The player instance can
+     * be
      * acquired through the event parameter. Transformations are already applied for
      * the RenderType passed in. Make sure to check against the type parameter for
      * rendering.
      */
     void onPlayerBaubleRender(PoseStack stack, Player player, RenderType type, float partialTicks);
-
 
     /**
      * A few helper methods for the render.
@@ -44,27 +42,32 @@ public interface IRenderBauble extends IBauble {
          * Use for renders under {@link RenderType#BODY}.
          */
         public static void applySneakingRotation(PoseStack stack) {
-            stack.translate(0f, .2f, 0f);
-            stack.mulPose(Vector3f.XP.rotationDegrees(90f / (float)Math.PI));
+            stack.translate(0f, 0.2f, 0f);
+            stack.mulPose(new Quaternionf().rotateX((float) Math.PI / 2));
         }
 
         /**
-         * Shifts the render for a bauble correctly to the head, including sneaking rotation.
+         * Shifts the render for a bauble correctly to the head, including sneaking
+         * rotation.
          * Use for renders under {@link RenderType#HEAD}.
          */
         public static void translateToHeadLevel(PoseStack stack, Player player) {
             stack.translate(0, -player.getEyeHeight(), 0);
             if (player.isCrouching())
-                stack.translate(0.25F * Mth.sin(player.yHeadRot * (float) Math.PI / 180), 0.25F * Mth.cos(player.yHeadRot * (float) Math.PI / 180), 0F);
+                stack.translate(0.25F * Mth.sin(player.yHeadRot * (float) Math.PI / 180),
+                        0.25F * Mth.cos(player.yHeadRot * (float) Math.PI / 180), 0F);
         }
 
         /**
          * Shifts the render for a bauble correctly to the face.
-         * Use for renders under {@link RenderType#HEAD}, and usually after calling {@link Helper#translateToHeadLevel(PoseStack, Player)}.
+         * Use for renders under {@link RenderType#HEAD}, and usually after calling
+         * {@link Helper#translateToHeadLevel(PoseStack, Player)}.
          */
         public static void translateToFace(PoseStack stack) {
-            stack.mulPose(Vector3f.YP.rotationDegrees(90f));
-            stack.mulPose(Vector3f.XP.rotationDegrees(180f));
+            Quaternionf rotation = new Quaternionf()
+                    .rotateY((float) Math.PI / 2)
+                    .mul(new Quaternionf().rotateX((float) Math.PI));
+            stack.mulPose(rotation);
             stack.translate(0f, -4.35f, -1.27f);
         }
 
@@ -79,17 +82,19 @@ public interface IRenderBauble extends IBauble {
 
         /**
          * Shifts the render for a bauble correctly to the chest.
-         * Use for renders under {@link RenderType#BODY}, and usually after calling {@link Helper#rotateIfSneaking(PoseStack, Player)}.
+         * Use for renders under {@link RenderType#BODY}, and usually after calling
+         * {@link Helper#rotateIfSneaking(PoseStack, Player)}.
          */
         public static void translateToChest(PoseStack stack) {
-            stack.mulPose(Vector3f.XP.rotationDegrees(180f));
+            stack.mulPose(new Quaternionf().rotateX(180f * ((float) Math.PI / 180f)));
             stack.translate(0F, -3.2F, -0.85F);
         }
     }
 
     enum RenderType {
         /**
-         * Render Type for the player's body, translations apply on the player's rotation.
+         * Render Type for the player's body, translations apply on the player's
+         * rotation.
          * Sneaking is not handled and should be done during the render.
          *
          * @see IRenderBauble.Helper
@@ -97,7 +102,8 @@ public interface IRenderBauble extends IBauble {
         BODY,
 
         /**
-         * Render Type for the player's body, translations apply on the player's head rotations.
+         * Render Type for the player's body, translations apply on the player's head
+         * rotations.
          * Sneaking is not handled and should be done during the render.
          *
          * @see IRenderBauble.Helper
