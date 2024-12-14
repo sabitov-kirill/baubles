@@ -75,15 +75,14 @@ public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerE
                     guiGraphics.blit(BACKGROUND, k + slot.x, l + slot.y, 200, 0, 16, 16);
                 }
             }
-            float rotationX = (float) (k + 51) - this.oldMouseX;
-            float rotationY = (float) (l + 75 - 50) - this.oldMouseY;
-            Quaternionf rotation = new Quaternionf()
-                    .rotateY(rotationY * ((float) Math.PI / 180F))
-                    .mul(new Quaternionf().rotateX(rotationX * ((float) Math.PI / 180F)));
 
-            InventoryScreen.renderEntityInInventory(guiGraphics,
-                    k + 51, l + 75, 30,
-                    rotation, rotation,
+            InventoryScreen.renderEntityInInventoryFollowsMouse(
+                    guiGraphics,
+                    k + 51,
+                    l + 75,
+                    30,
+                    (float) (k + 51) - this.oldMouseX,
+                    (float) (l + 75 - 50) - this.oldMouseY,
                     this.minecraft.player);
         }
     }
